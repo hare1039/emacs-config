@@ -3,29 +3,30 @@
 
 (setq mc/cmds-to-run-for-all
       '(
-		c-electric-brace
-		c-electric-colon
-		c-electric-delete-forward
-		c-electric-lt-gt
-		c-electric-paren
-		c-electric-semi&comma
-		c-electric-slash
-		c-electric-star
-		c-indent-line-or-region
-		dired-toggle-read-only
-		dired-undo
-		dired-unmark-backward
-		eval-last-sexp
-		find-file
-		ibuffer
-		sgml-slash
-		wdired-exit
-		wdired-finish-edit
-		xterm-paste
-		))
+        c-electric-brace
+        c-electric-colon
+        c-electric-delete-forward
+        c-electric-lt-gt
+        c-electric-paren
+        c-electric-semi&comma
+        c-electric-slash
+        c-electric-star
+        c-indent-line-or-region
+        dired-toggle-read-only
+        dired-undo
+        dired-unmark-backward
+        electric-pair-delete-pair
+        eval-last-sexp
+        find-file
+        ibuffer
+        sgml-slash
+        wdired-exit
+        wdired-finish-edit
+        xterm-paste
+        ))
 
 (setq mc/cmds-to-run-once
       '(
-		indent-for-tab-command
-		kill-region
-		))
+        indent-for-tab-command
+        kill-region
+        ))

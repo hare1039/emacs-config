@@ -2,7 +2,7 @@
 (package-initialize)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives 
+(add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 ;disable backup
 (setq backup-inhibited t)
@@ -16,10 +16,13 @@
 ;; indent-tabs-mode explicitly. makefile-mode already does that, for
 ;; example.
 (setq-default indent-tabs-mode nil)
-(add-hook 'write-file-hooks 
+(add-hook 'write-file-hooks
           (lambda () (if (not indent-tabs-mode)
                          (untabify (point-min) (point-max)))
             nil))
+
+(add-hook 'before-save-hook
+          'delete-trailing-whitespace)
 
 (setq-default tab-width 4)
 (setq dired-recursive-deletes 'always)
@@ -74,7 +77,7 @@
             (setq tab-width 4)
             (setq indent-tabs-mode 1)
             (electric-pair-mode 1)))
- 
+
 (when (< emacs-major-version 24)
   ;; For important compatibility libraries like cl-lib
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
@@ -86,7 +89,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (origami toml toml-mode yaml-mode rust-mode golden-ratio org-tree-slide epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete)))
+    (minesweeper origami toml toml-mode yaml-mode rust-mode golden-ratio org-tree-slide epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete)))
  '(python-shell-interpreter "python")
  '(truncate-lines nil))
 (custom-set-faces
@@ -123,9 +126,9 @@
 
 (setenv "GOPATH" "/Users/hare1039/Documents/gopath")
 
-(defun go-mode-hook-x0 ()                               
+(defun go-mode-hook-x0 ()
       (add-hook 'before-save-hook 'gofmt-before-save)
-      ; Godef jump key binding                                                      
+      ; Godef jump key binding
       (local-set-key (kbd "M-o") 'godef-jump)
       (local-set-key (kbd "M-p") 'pop-tag-mark)
       (auto-complete-mode 1))
