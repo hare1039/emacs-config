@@ -4,6 +4,8 @@
              '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(add-to-list 'load-path "~/.emacs.d/manual-packages/gud-lldb")
+
 ;disable backup
 (setq backup-inhibited t)
 ;disable auto save
@@ -33,21 +35,15 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
     (autoload 'ibuffer "ibuffer" "List buffers." t)
 
-(dolist (key '("\C-b" "\C-f" "\C-n" "\C-p" "\C-q"))
+(dolist (key '("\C-b" "\C-f" "\C-n" "\C-p" "\C-q" "\C-x\C-r"))
   (global-unset-key key))
 
 (global-set-key (kbd "C-p") 'undo)
 
 (defun custom-c++-mode-hook ()
+  (define-key c++-mode-map (kbd "C-c C-a") nil)
   (c-set-offset 'substatement-open 0)
   (setq truncate-lines 0))
-
-(defun execute-c++-program ()
-  (interactive)
-  (defvar foo)
-  (setq foo (concat "clang++ -std=c++14 " (buffer-name) " && ./a.out; rm a.out" ))
-  (shell-command foo))
-
 
 (add-hook 'c++-mode-hook 'custom-c++-mode-hook)
 
@@ -68,8 +64,6 @@
 ;(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 ;(el-get 'sync)
 
-
-(global-set-key (kbd "C-x C-a") 'magit-status)
 
 (add-hook 'go-mode-hook
           (lambda ()
@@ -148,10 +142,8 @@
 
 (visual-line-mode 1)
 
-;(eval-after-load "gud"
-;  '(progn
-;    (local-unset-key (kbd "C-x C-a"))
-;    (local-set-key (kbd "C-c C-a") 'magit-status)))
+(setq gud-key-prefix "\C-c\C-a")
+(global-set-key (kbd "C-x C-a") 'magit-status)
 
 (setq dired-listing-switches "-alh")
 
@@ -198,3 +190,17 @@
             (when (derived-mode-p 'c-mode 'c++-mode 'go-mode)
               (origami-mode 1))))
 (define-key origami-mode-map (kbd "C-q") 'origami-recursively-toggle-node)
+
+(require 'gud-lldb)
+(defadvice lldb (before gud-query-cmdline activate)
+  "Provide a better default command line when called interactively."
+  (add-to-list 'exec-path "/usr/bin")
+  (setenv "PATH" (concat "/usr/bin" ":" (getenv "PATH"))))
+
+(defun lldb-debug()
+  (interactive)
+  (defvar cmd)
+  (setq cmd (concat "clang++ -std=c++17 -glldb *.cpp -o run"))
+  (shell-command cmd)
+  (call-interactively 'lldb))
+(global-set-key (kbd "C-x C-r") 'lldb-debug)

@@ -12,6 +12,7 @@
         c-electric-slash
         c-electric-star
         c-indent-line-or-region
+        dired-next-line
         dired-toggle-read-only
         dired-undo
         dired-unmark-backward
@@ -22,6 +23,7 @@
         sgml-slash
         wdired-exit
         wdired-finish-edit
+        wdired-next-line
         xterm-paste
         ))
 
