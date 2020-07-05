@@ -14,6 +14,11 @@
 (setq c-default-style "linux"
       c-basic-offset 4)
 
+(add-hook 'html-mode-hook
+  (lambda ()
+    ;; Default indentation is usually 2 spaces, changing to 4.
+    (set (make-local-variable 'sgml-basic-offset) 4)))
+
 ;; no tabs by default. modes that really need tabs should enable
 ;; indent-tabs-mode explicitly. makefile-mode already does that, for
 ;; example.
@@ -29,7 +34,7 @@
 (setq-default tab-width 4)
 (setq dired-recursive-deletes 'always)
 (setq dired-recursive-copies 'always)
-(setq package-list '(auto-complete multiple-cursors origami go-mode magit golden-ratio color-theme go-autocomplete yaml-mode toml toml-mode))
+(setq package-list '(auto-complete multiple-cursors origami go-mode magit golden-ratio color-theme go-autocomplete yaml-mode toml toml-mode column-enforce-mode))
 
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -43,10 +48,14 @@
 (defun custom-c++-mode-hook ()
   (define-key c++-mode-map (kbd "C-c C-a") nil)
   (c-set-offset 'substatement-open 0)
+  (auto-complete-mode 1)
   (setq truncate-lines 0))
 
 (add-hook 'c++-mode-hook 'custom-c++-mode-hook)
+(add-hook 'c-mode-hook 'custom-c++-mode-hook)
 
+;(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+;(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
 (electric-pair-mode 1)
 (electric-indent-mode 1)
 (column-number-mode 1)
@@ -83,7 +92,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (minesweeper origami toml toml-mode yaml-mode rust-mode golden-ratio org-tree-slide epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete)))
+    (tuareg column-enforce-mode minesweeper origami toml toml-mode yaml-mode rust-mode golden-ratio org-tree-slide epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete)))
  '(python-shell-interpreter "python")
  '(truncate-lines nil))
 (custom-set-faces
@@ -183,12 +192,23 @@
 ;(load "color-theme-manoj")
 (set-default 'truncate-lines t)
 
+(autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
+(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
+(setq prolog-system 'swi)
+(setq auto-mode-alist (append '(("\\.p$" . prolog-mode)
+                                ("\\.m$" . mercury-mode))
+                               auto-mode-alist))
+
 ;; Configure origami
 (require 'origami)
 (add-hook 'c-mode-common-hook
           (lambda ()
             (when (derived-mode-p 'c-mode 'c++-mode 'go-mode)
               (origami-mode 1))))
+(add-hook 'python-mode-hook
+          '(lambda () (origami-mode 1)) t)
+
 (define-key origami-mode-map (kbd "C-q") 'origami-recursively-toggle-node)
 
 (require 'gud-lldb)
@@ -200,7 +220,11 @@
 (defun lldb-debug()
   (interactive)
   (defvar cmd)
-  (setq cmd (concat "clang++ -std=c++17 -glldb *.cpp -o run"))
+  (setq cmd (concat "make debug"))
   (shell-command cmd)
   (call-interactively 'lldb))
 (global-set-key (kbd "C-x C-r") 'lldb-debug)
+
+(require 'column-enforce-mode)
+(setq column-enforce-comments nil)
+(add-hook 'git-commit-setup-hook 'column-enforce-mode)
