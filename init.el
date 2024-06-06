@@ -9,7 +9,7 @@
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
 
-
+(defvar byte-compile-warnings nil)
 (unless (fboundp 'package-activate-all) (package-initialize))
 
 ;disable backup
@@ -133,8 +133,9 @@
  ;; If there is more than one, they won't work right.
  )
 
-(unless package-archive-contents
-  (package-refresh-contents))
+(or (file-exists-p package-user-dir) (package-refresh-contents))
+;(unless package-archive-contents
+;  (package-refresh-contents))
 (dolist (package package-list)
   (unless (package-installed-p package)
     (package-install package)))
