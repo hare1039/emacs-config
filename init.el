@@ -1,6 +1,8 @@
 (require 'package)
 ;(package-initialize)
 (setq package-check-signature nil)
+(setq warning-minimum-level :error)
+
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
