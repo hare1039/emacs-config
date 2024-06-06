@@ -1,5 +1,6 @@
 (require 'package)
 ;(package-initialize)
+(setq package-check-signature nil)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
@@ -118,7 +119,7 @@
  ;; If there is more than one, they won't work right.
  '(auth-source-save-behavior nil)
  '(package-selected-packages
-   '(elpy vterm julia-repl julia-mode typescript-mode matlab-mode color-theme 2048-game racket-mode cmake-mode luarocks lua-mode wc-mode markdown-mode company-coq proof-general tuareg column-enforce-mode minesweeper origami toml toml-mode yaml-mode rust-mode golden-ratio epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete))
+   '(elpy typescript-mode matlab-mode color-theme 2048-game racket-mode cmake-mode luarocks lua-mode wc-mode markdown-mode company-coq proof-general tuareg column-enforce-mode minesweeper origami toml toml-mode yaml-mode rust-mode golden-ratio epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete))
  '(python-shell-interpreter "python")
  '(truncate-lines nil)
  '(warning-suppress-types
@@ -311,13 +312,13 @@
    "Return a string which is a concatenation of all elements of the list separated by spaces"
     (mapconcat '(lambda (obj) (format "%s" obj)) list " "))
 
-(setenv "JULIA_NUM_THREADS" "4")
+;(setenv "JULIA_NUM_THREADS" "4")
 ;;(add-to-list 'load-path path-to-julia-repl)
-(require 'julia-repl)
-(add-hook 'julia-mode-hook 'julia-repl-mode) ;; always use minor mode
+;(require 'julia-repl)
+;(add-hook 'julia-mode-hook 'julia-repl-mode) ;; always use minor mode
 
-(julia-repl-set-terminal-backend 'vterm)
-(setq vterm-kill-buffer-on-exit nil)
+;(julia-repl-set-terminal-backend 'vterm)
+;(setq vterm-kill-buffer-on-exit nil)
 
 (setq python-shell-interpreter "python3"
       python-shell-interpreter-args "-i")
