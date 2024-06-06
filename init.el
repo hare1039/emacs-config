@@ -1,10 +1,12 @@
 (require 'package)
-(package-initialize)
+;(package-initialize)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'load-path "~/.emacs.d/manual-packages/gud-lldb")
+
+(unless (fboundp 'package-activate-all) (package-initialize))
 
 ;disable backup
 (setq backup-inhibited t)
@@ -54,6 +56,12 @@
 (add-hook 'c++-mode-hook 'custom-c++-mode-hook)
 (add-hook 'c-mode-hook 'custom-c++-mode-hook)
 
+(defun custom-racket-mode-hook ()
+  (auto-complete-mode 1)
+  (80-column-rule 1)
+  (setq truncate-lines 0))
+(add-hook 'racket-mode-hook 'custom-racket-mode-hook)
+
 ;(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
 ;(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
 (electric-pair-mode 1)
@@ -73,6 +81,20 @@
 ;(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 ;(el-get 'sync)
 
+; set from 4820
+(load "$HOME/.emacs.d/acl2.el")
+(put 'match 'lisp-indent-function 'defun)
+(setq line-number-mode t)
+(setq column-number-mode t)
+(setq visible-bell t)
+(setq fill-column 80)
+(setq default-major-mode 'text-mode)
+(setq text-mode-hook
+      '(lambda () (auto-fill-mode 1)))
+(add-hook 'text-mode 'turn-on-auto-fill)
+(show-paren-mode 1)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
 
 (add-hook 'go-mode-hook
           (lambda ()
@@ -85,16 +107,21 @@
   ;; For important compatibility libraries like cl-lib
   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 (package-initialize)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(auth-source-save-behavior nil)
  '(package-selected-packages
-   (quote
-    (tuareg column-enforce-mode minesweeper origami toml toml-mode yaml-mode rust-mode golden-ratio org-tree-slide epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete)))
+   '(elpy vterm julia-repl julia-mode typescript-mode matlab-mode color-theme 2048-game racket-mode cmake-mode luarocks lua-mode wc-mode markdown-mode company-coq proof-general tuareg column-enforce-mode minesweeper origami toml toml-mode yaml-mode rust-mode golden-ratio epresent tide org ox-gfm multiple-cursors ac-clang bison-mode undo-tree rainbow-mode rainbow-delimiters rjsx-mode magit go-autocomplete exec-path-from-shell go-mode auto-complete))
  '(python-shell-interpreter "python")
- '(truncate-lines nil))
+ '(truncate-lines nil)
+ '(warning-suppress-types
+   '(((python python-shell-completion-native-turn-on-maybe))
+     (color-theme))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -142,8 +169,8 @@
 
 ;; go IDE finish
 
-(eval-after-load "org"
-  '(require 'ox-gfm nil t))
+;(eval-after-load "org"
+;  '(require 'ox-gfm nil t))
 
 
 (require 'golden-ratio)
@@ -172,18 +199,18 @@
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
-(when (require 'org-tree-slide nil t)
-  (global-set-key (kbd "<f8>") 'org-tree-slide-mode)
-  (global-set-key (kbd "S-<f8>") 'org-tree-slide-skip-done-toggle)
-  (define-key org-tree-slide-mode-map (kbd "<f7>")
-    'org-tree-slide-move-previous-tree)
-  (define-key org-tree-slide-mode-map (kbd "<f9>")
-    'org-tree-slide-move-next-tree)
-  (define-key org-tree-slide-mode-map (kbd "<f10>")
-    'org-tree-slide-content)
-  (setq org-tree-slide-skip-outline-level 4)
-  (org-tree-slide-narrowing-control-profile)
-  (setq org-tree-slide-skip-done nil))
+;(when (require 'org-tree-slide nil t)
+;  (global-set-key (kbd "<f8>") 'org-tree-slide-mode)
+;  (global-set-key (kbd "S-<f8>") 'org-tree-slide-skip-done-toggle)
+;  (define-key org-tree-slide-mode-map (kbd "<f7>")
+;    'org-tree-slide-move-previous-tree)
+;  (define-key org-tree-slide-mode-map (kbd "<f9>")
+;    'org-tree-slide-move-next-tree)
+;  (define-key org-tree-slide-mode-map (kbd "<f10>")
+;    'org-tree-slide-content)
+;  (setq org-tree-slide-skip-outline-level 4)
+;  (org-tree-slide-narrowing-control-profile)
+;  (setq org-tree-slide-skip-done nil))
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 ;(require 'color-theme)
@@ -192,13 +219,28 @@
 ;(load "color-theme-manoj")
 (set-default 'truncate-lines t)
 
-(autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
-(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
-(setq prolog-system 'swi)
-(setq auto-mode-alist (append '(("\\.p$" . prolog-mode)
-                                ("\\.m$" . mercury-mode))
-                               auto-mode-alist))
+
+;; matlab
+(autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+(add-to-list
+ 'auto-mode-alist
+ '("\\.m$" . matlab-mode))
+(setq matlab-indent-function t)
+(setq matlab-shell-command "matlab")
+
+
+;;prolog
+;(autoload 'run-prolog "prolog" "Start a Prolog sub-process." t)
+;(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+;(autoload 'mercury-mode "prolog" "Major mode for editing Mercury programs." t)
+;(setq prolog-system 'swi)
+;(setq auto-mode-alist (append '(("\\.p$" . prolog-mode)
+;                                ("\\.m$" . mercury-mode))
+;                               auto-mode-alist))
+
+(add-hook 'markdown-mode-hook '80-column-rule)
+(add-hook 'markdown-mode-hook
+          '(lambda ()(wc-mode 1)) t)
 
 ;; Configure origami
 (require 'origami)
@@ -210,13 +252,14 @@
           '(lambda () (origami-mode 1)) t)
 
 (define-key origami-mode-map (kbd "C-q") 'origami-recursively-toggle-node)
+(define-key origami-mode-map (kbd "M-q") 'origami-show-only-node)
 
 (require 'gud-lldb)
 (defadvice lldb (before gud-query-cmdline activate)
   "Provide a better default command line when called interactively."
   (add-to-list 'exec-path "/usr/bin")
   (setenv "PATH" (concat "/usr/bin" ":" (getenv "PATH"))))
-
+;(custom-set-faces '(org-table ((t (:foreground "WhiteSmoke")))))
 (defun lldb-debug()
   (interactive)
   (defvar cmd)
@@ -228,3 +271,50 @@
 (require 'column-enforce-mode)
 (setq column-enforce-comments nil)
 (add-hook 'git-commit-setup-hook 'column-enforce-mode)
+(put 'downcase-region 'disabled nil)
+
+;; dired zip/unzip
+(eval-after-load "dired-aux"
+   '(add-to-list 'dired-compress-file-suffixes
+                 '("\\.zip\\'" ".zip" "unzip")))
+
+(eval-after-load "dired"
+  '(define-key dired-mode-map "z" 'dired-zip-files))
+(defun dired-zip-files (zip-file)
+  "Create an archive containing the marked files."
+  (interactive "sEnter name of zip file: ")
+
+  ;; create the zip file
+  (let ((zip-file (if (string-match ".zip$" zip-file) zip-file (concat zip-file ".zip"))))
+    (shell-command
+     (concat "zip "
+             zip-file
+             " "
+             (concat-string-list
+              (mapcar
+               '(lambda (filename)
+                  (file-name-nondirectory filename))
+               (dired-get-marked-files))))))
+
+  (revert-buffer)
+
+  ;; remove the mark on all the files  "*" to " "
+  ;; (dired-change-marks 42 ?\040)
+  ;; mark zip file
+  ;; (dired-mark-files-regexp (filename-to-regexp zip-file))
+  )
+
+(defun concat-string-list (list)
+   "Return a string which is a concatenation of all elements of the list separated by spaces"
+    (mapconcat '(lambda (obj) (format "%s" obj)) list " "))
+
+(setenv "JULIA_NUM_THREADS" "4")
+;;(add-to-list 'load-path path-to-julia-repl)
+(require 'julia-repl)
+(add-hook 'julia-mode-hook 'julia-repl-mode) ;; always use minor mode
+
+(julia-repl-set-terminal-backend 'vterm)
+(setq vterm-kill-buffer-on-exit nil)
+
+(setq python-shell-interpreter "python3"
+      python-shell-interpreter-args "-i")

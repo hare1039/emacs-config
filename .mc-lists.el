@@ -17,18 +17,23 @@
         dired-next-line
         dired-toggle-read-only
         dired-undo
+        dired-unmark-all-files
         dired-unmark-backward
         electric-pair-delete-pair
         end-of-buffer
         eval-last-sexp
         find-file
+        goto-line
         ibuffer
+        racket-insert-closing
         sgml-slash
         string-rectangle
         suspend-frame
+        wdired--self-insert
         wdired-exit
         wdired-finish-edit
         wdired-next-line
+        wdired-previous-line
         xref-pop-marker-stack
         xterm-paste
         yaml-electric-backspace
