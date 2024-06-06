@@ -5,6 +5,9 @@
 (add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'load-path "~/.emacs.d/manual-packages/gud-lldb")
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/"))
+
 
 (unless (fboundp 'package-activate-all) (package-initialize))
 
@@ -103,10 +106,10 @@
             (setq indent-tabs-mode 1)
             (electric-pair-mode 1)))
 
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize)
+;(when (< emacs-major-version 24)
+;  ;; For important compatibility libraries like cl-lib
+;(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+;(package-initialize)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
